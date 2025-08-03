@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zubrify Pay - Complete Payment Gateway System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .code-block { background: #1a1a1a; color: #f8f8f2; }
+        .nav-active { border-bottom: 3px solid #667eea; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-credit-card text-3xl"></i>
+                    <h1 class="text-3xl font-bold">Zubrify Pay</h1>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg">Your Complete Payment Gateway Solution</p>
+                    <p class="text-sm opacity-75">Built for Modern Businesses</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-8 overflow-x-auto">
+                <button onclick="showSection('overview')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap nav-active">
+                    <i class="fas fa-home mr-2"></i>Overview
+                </button>
+                <button onclick="showSection('api')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-code mr-2"></i>API Documentation
+                </button>
+                <button onclick="showSection('database')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-database mr-2"></i>Database Schema
+                </button>
+                <button onclick="showSection('wordpress')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fab fa-wordpress mr-2"></i>WordPress Plugin
+                </button>
+                <button onclick="showSection('dashboard')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Admin Dashboard
+                </button>
+                <button onclick="showSection('security')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-shield-alt mr-2"></i>Security
+                </button>
+                <button onclick="showSection('webhooks')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-webhook mr-2"></i>Webhooks
+                </button>
+                <button onclick="showSection('installation')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
+                    <i class="fas fa-download mr-2"></i>Installation
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Overview Section -->
+        <div id="overview" class="section">
+            <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome to Zubrify Pay</h2>
+                <p class="text-lg text-gray-600 mb-8">A complete, self-hosted payment gateway solution designed for businesses who want full control over their payment processing.</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center p-6 bg-blue-50 rounded-lg">
+                        <i class="fas fa-bolt text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Fast & Reliable</h3>
+                        <p class="text-gray-600">Lightning-fast transaction processing with 99.9% uptime guarantee</p>
+                    </div>
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <i class="fas fa-shield-alt text-4xl text-green-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Secure</h3>
+                        <p class="text-gray-600">Bank-grade security with PCI DSS compliance and advanced fraud protection</p>
+                    </div>
+                    <div class="text-center p-6 bg-purple-50 rounded-lg">
+                        <i class="fas fa-cogs text-4xl text-purple-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Customizable</h3>
+                        <p class="text-gray-600">Full control over your payment flow with extensive customization options</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Supported Payment Methods</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="flex items-center p-3 bg-white rounded">
+                            <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
+                            <span>Mobile Money (EVC, ZAAD, SAHAL)</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-white rounded">
+                            <i class="fas fa-credit-card text-green-600 mr-3"></i>
+                            <span>Credit/Debit Cards</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-white rounded">
+                            <i class="fas fa-university text-purple-600 mr-3"></i>
+                            <span>Bank Transfers</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-white rounded">
+                            <i class="fas fa-wallet text-orange-600 mr-3"></i>
+                            <span>Digital Wallets</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-600 text-white rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Transaction Statistics</h3>
+                    <div style="height: 400px;">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Documentation Section -->
+        <div id="api" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">API Documentation</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Base URL</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <code>https://api.zubrify.com/v1/</code>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Authentication</h3>
+                    <p class="text-gray-600 mb-4">All API requests require authentication using API keys. Include your API key in the Authorization header:</p>
+                    <div class="code-block p-4 rounded-lg">
+                        <code>Authorization: Bearer YOUR_API_KEY</code>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Create Payment</h3>
+                    <div class="bg-green-100 p-2 rounded mb-2 inline-block">
+                        <span class="text-green-800 font-semibold">POST</span>
+                    </div>
+                    <code class="text-gray-600">/payments</code>
+                    
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Request Body:</h4>
+                    <div class="code-block p-4 rounded-lg mb-4">
+                        <pre><code>{
+  "amount": "100.00",
+  "currency": "USD",
+  "payment_method": "mobile_money",
+  "customer": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "252615123456"
+  },
+  "order_id": "ORDER_123",
+  "return_url": "https://yoursite.com/return",
+  "webhook_url": "https://yoursite.com/webhook"
+}</code></pre>
+                    </div>
+
+                    <h4 class="text-lg font-semibold mb-2">Response:</h4>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>{
+  "success": true,
+  "payment_id": "pay_abc123",
+  "status": "pending",
+  "payment_url": "https://checkout.zubrify.com/pay_abc123",
+  "expires_at": "2024-01-01T12:00:00Z"
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Get Payment Status</h3>
+                    <div class="bg-blue-100 p-2 rounded mb-2 inline-block">
+                        <span class="text-blue-800 font-semibold">GET</span>
+                    </div>
+                    <code class="text-gray-600">/payments/{payment_id}</code>
+                    
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Response:</h4>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>{
+  "payment_id": "pay_abc123",
+  "status": "completed",
+  "amount": "100.00",
+  "currency": "USD",
+  "payment_method": "mobile_money",
+  "transaction_id": "txn_xyz789",
+  "created_at": "2024-01-01T10:00:00Z",
+  "completed_at": "2024-01-01T10:05:00Z"
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Refund Payment</h3>
+                    <div class="bg-red-100 p-2 rounded mb-2 inline-block">
+                        <span class="text-red-800 font-semibold">POST</span>
+                    </div>
+                    <code class="text-gray-600">/payments/{payment_id}/refund</code>
+                    
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Request Body:</h4>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>{
+  "amount": "50.00",
+  "reason": "Customer request"
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <h4 class="text-lg font-semibold mb-2">Status Codes</h4>
+                    <ul class="space-y-1">
+                        <li><strong>pending:</strong> Payment initiated, waiting for customer</li>
+                        <li><strong>processing:</strong> Payment being processed</li>
+                        <li><strong>completed:</strong> Payment successful</li>
+                        <li><strong>failed:</strong> Payment failed</li>
+                        <li><strong>cancelled:</strong> Payment cancelled</li>
+                        <li><strong>refunded:</strong> Payment refunded</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Schema Section -->
+        <div id="database" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Database Schema</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Tables Overview</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-2">Core Tables</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• payments</li>
+                                <li>• customers</li>
+                                <li>• merchants</li>
+                                <li>• transactions</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-2">Support Tables</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• payment_methods</li>
+                                <li>• webhooks</li>
+                                <li>• api_keys</li>
+                                <li>• audit_logs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Payments Table</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>CREATE TABLE payments (
+    id VARCHAR(36) PRIMARY KEY,
+    merchant_id VARCHAR(36) NOT NULL,
+    customer_id VARCHAR(36),
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+    status ENUM('pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded') DEFAULT 'pending',
+    payment_method VARCHAR(50) NOT NULL,
+    order_id VARCHAR(100),
+    description TEXT,
+    return_url TEXT,
+    webhook_url TEXT,
+    payment_url TEXT,
+    transaction_id VARCHAR(100),
+    expires_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_merchant_id (merchant_id),
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_status (status),
+    INDEX idx_created_at (created_at)
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Customers Table</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>CREATE TABLE customers (
+    id VARCHAR(36) PRIMARY KEY,
+    merchant_id VARCHAR(36) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    country VARCHAR(2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_merchant_id (merchant_id),
+    INDEX idx_email (email),
+    INDEX idx_phone (phone)
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Merchants Table</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>CREATE TABLE merchants (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    business_type VARCHAR(100),
+    country VARCHAR(2),
+    website VARCHAR(255),
+    status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_email (email),
+    INDEX idx_status (status)
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">API Keys Table</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>CREATE TABLE api_keys (
+    id VARCHAR(36) PRIMARY KEY,
+    merchant_id VARCHAR(36) NOT NULL,
+    key_type ENUM('live', 'test') NOT NULL,
+    api_key VARCHAR(255) NOT NULL,
+    api_secret VARCHAR(255) NOT NULL,
+    permissions JSON,
+    last_used_at TIMESTAMP NULL,
+    expires_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY unique_merchant_type (merchant_id, key_type),
+    INDEX idx_api_key (api_key)
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Installation Script</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>-- Run this script to create the complete Zubrify Pay database
+-- Replace 'zubrify_pay' with your preferred database name
+
+CREATE DATABASE zubrify_pay;
+USE zubrify_pay;
+
+-- Create all tables
+SOURCE /path/to/zubrify_pay_schema.sql;
+
+-- Create default admin user
+INSERT INTO merchants (id, name, email, status) 
+VALUES (UUID(), 'System Admin', 'admin@zubrify.com', 'active');
+
+-- Generate API keys for admin
+INSERT INTO api_keys (id, merchant_id, key_type, api_key, api_secret)
+VALUES (
+    UUID(), 
+    (SELECT id FROM merchants WHERE email = 'admin@zubrify.com'),
+    'live',
+    CONCAT('zp_live_', REPLACE(UUID(), '-', '')),
+    REPLACE(UUID(), '-', '')
+);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WordPress Plugin Section -->
+        <div id="wordpress" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">WordPress Plugin</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Plugin Structure</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <pre><code>zubrify-pay/
+├── zubrify-pay.php
+├── includes/
+│   ├── class-zubrify-core.php
+│   ├── class-zubrify-gateway.php
+│   ├── class-zubrify-webhook.php
+│   └── class-zubrify-admin.php
+├── assets/
+│   ├── js/checkout.js
+│   └── css/styles.css
+└── readme.txt</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Main Plugin File (zubrify-pay.php)</h3>
+                    <div class="code-block p-4 rounded-lg overflow-x-auto">
+                        <pre><code>&lt;?php
+/**
+ * Plugin Name: Zubrify Pay
+ * Description: Complete payment gateway for WordPress & WooCommerce
+ * Version: 1.0.0
+ * Author: Your Name
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+define('ZUBRIFY_PAY_VERSION', '1.0.0');
+define('ZUBRIFY_PAY_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('ZUBRIFY_PAY_PLUGIN_PATH', plugin_dir_path(__FILE__));
+
+class Zubrify_Pay {
+    public function __construct() {
+        add_action('plugins_loaded', array($this, 'init'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+    }
+
+    public function init() {
+        if (!class_exists('WooCommerce')) {
+            add_action('admin_notices', array($this, 'woocommerce_missing_notice'));
+            return;
+        }
+
+        $this->includes();
+        $this->init_gateway();
+    }
+
+    private function includes() {
+        require_once ZUBRIFY_PAY_PLUGIN_PATH . 'includes/class-zubrify-core.php';
+        require_once ZUBRIFY_PAY_PLUGIN_PATH . 'includes/class-zubrify-gateway.php';
+        require_once ZUBRIFY_PAY_PLUGIN_PATH . 'includes/class-zubrify-webhook.php';
+        require_once ZUBRIFY_PAY_PLUGIN_PATH . 'includes/class-zubrify-admin.php';
+    }
+
+    private function init_gateway() {
+        add_filter('woocommerce_payment_gateways', array($this, 'add_gateway'));
+        new Zubrify_Webhook();
+        new Zubrify_Admin();
+    }
+
+    public function add_gateway($gateways) {
+        $gateways[] = 'Zubrify_Gateway';
+        return $gateways;
+    }
+
+    public function activate() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'zubrify_transactions';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            payment_id varchar(100) NOT NULL,
+            order_id bigint(20) NOT NULL,
+            amount decimal(10,2) NOT NULL,
+            currency varchar(3) NOT NULL,
+            status varchar(20) NOT NULL,
+            payment_method varchar(50) NOT NULL,
+            transaction_id varchar(100),
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY payment_id (payment_id),
+            KEY order_id (order_id)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    public function deactivate() {
+        // Cleanup tasks
+    }
+
+    public function woocommerce_missing_notice() {
+        echo '&lt;div class="notice notice-error"&gt;&lt;p&gt;Zubrify Pay requires WooCommerce to be installed and active.&lt;/p&gt;&lt;/div&gt;';
+    }
+}
+
+new Zubrify_Pay();</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Gateway Class (class-zubrify-gateway.php)</h3>
+                    <div class="code-block p-4 rounded-lg overflow-x-auto">
+                        <pre><code>&lt;?php
+class Zubrify_Gateway extends WC_Payment_Gateway {
+    
+    public function __construct() {
+        $this->id = 'zubrify_pay';
+        $this->icon = ZUBRIFY_PAY_PLUGIN_URL . 'assets/images/logo.png';
+        $this->has_fields = true;
+        $this->method_title = 'Zubrify Pay';
+        $this->method_description = 'Accept payments via Zubrify Pay gateway';
+        
+        $this->supports = array(
+            'products',
+            'refunds',
+            'subscriptions'
+        );
+
+        $this->init_form_fields();
+        $this->init_settings();
+
+        $this->title = $this->get_option('title');
+        $this->description = $this->get_option('description');
+        $this->enabled = $this->get_option('enabled');
+        $this->testmode = 'yes' === $this->get_option('testmode');
+        $this->api_key = $this->testmode ? $this->get_option('test_api_key') : $this->get_option('live_api_key');
+
+        add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
+        add_action('wp_enqueue_scripts', array($this, 'payment_scripts'));
+    }
+
+    public function init_form_fields() {
+        $this->form_fields = array(
+            'enabled' => array(
+                'title' => 'Enable/Disable',
+                'type' => 'checkbox',
+                'label' => 'Enable Zubrify Pay',
+                'default' => 'no'
+            ),
+            'title' => array(
+                'title' => 'Title',
+                'type' => 'text',
+                'description' => 'Payment method title shown during checkout',
+                'default' => 'Zubrify Pay',
+                'desc_tip' => true,
+            ),
+            'description' => array(
+                'title' => 'Description',
+                'type' => 'textarea',
+                'description' => 'Payment method description shown during checkout',
+                'default' => 'Pay securely using mobile money, cards, or bank transfer.',
+            ),
+            'testmode' => array(
+                'title' => 'Test Mode',
+                'type' => 'checkbox',
+                'label' => 'Enable Test Mode',
+                'default' => 'yes',
+                'description' => 'Place the payment gateway in test mode',
+            ),
+            'test_api_key' => array(
+                'title' => 'Test API Key',
+                'type' => 'text',
+                'description' => 'Your Zubrify Pay test API key',
+            ),
+            'live_api_key' => array(
+                'title' => 'Live API Key',
+                'type' => 'text',
+                'description' => 'Your Zubrify Pay live API key',
+            ),
+        );
+    }
+
+    public function payment_fields() {
+        if ($this->description) {
+            echo wpautop(wp_kses_post($this->description));
+        }
+        
+        echo '&lt;div id="zubrify-payment-form"&gt;';
+        echo '&lt;fieldset&gt;';
+        echo '&lt;p class="form-row form-row-wide"&gt;';
+        echo '&lt;label for="zubrify-payment-method"&gt;Payment Method&lt;/label&gt;';
+        echo '&lt;select id="zubrify-payment-method" name="zubrify_payment_method" required&gt;';
+        echo '&lt;option value=""&gt;Select Payment Method&lt;/option&gt;';
+        echo '&lt;option value="mobile_money"&gt;Mobile Money (EVC/ZAAD/SAHAL)&lt;/option&gt;';
+        echo '&lt;option value="card"&gt;Credit/Debit Card&lt;/option&gt;';
+        echo '&lt;option value="bank_transfer"&gt;Bank Transfer&lt;/option&gt;';
+        echo '&lt;/select&gt;';
+        echo '&lt;/p&gt;';
+        
+        echo '&lt;div id="mobile-money-fields" style="display:none;"&gt;';
+        echo '&lt;p class="form-row form-row-wide"&gt;';
+        echo '&lt;label for="zubrify-phone"&gt;Phone Number&lt;/label&gt;';
+        echo '&lt;input type="tel" id="zubrify-phone" name="zubrify_phone" placeholder="252615123456" /&gt;';
+        echo '&lt;/p&gt;';
+        echo '&lt;/div&gt;';
+        
+        echo '&lt;/fieldset&gt;';
+        echo '&lt;/div&gt;';
+    }
+
+    public function validate_fields() {
+        if (empty($_POST['zubrify_payment_method'])) {
+            wc_add_notice('Please select a payment method.', 'error');
+            return false;
+        }
+
+        if ($_POST['zubrify_payment_method'] === 'mobile_money' && empty($_POST['zubrify_phone'])) {
+            wc_add_notice('Please enter your phone number.', 'error');
+            return false;
+        }
+
+        return true;
+    }
+
+    public function process_payment($order_id) {
+        $order = wc_get_order($order_id);
+        $core = new Zubrify_Core($this->api_key, $this->testmode);
+
+        $payment_data = array(
+            'amount' => $order->get_total(),
+            'currency' => $order->get_currency(),
+            'payment_method' => sanitize_text_field($_POST['zubrify_payment_method']),
+            'customer' => array(
+                'name' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+                'email' => $order->get_billing_email(),
+                'phone' => sanitize_text_field($_POST['zubrify_phone']),
+            ),
+            'order_id' => $order_id,
+            'return_url' => $this->get_return_url($order),
+            'webhook_url' => home_url('/wc-api/zubrify_webhook'),
+        );
+
+        $result = $core->create_payment($payment_data);
+
+        if ($result['success']) {
+            // Store payment info
+            $order->update_meta_data('_zubrify_payment_id', $result['payment_id']);
+            $order->save();
+
+            // Redirect to payment page
+            return array(
+                'result' => 'success',
+                'redirect' => $result['payment_url']
+            );
+        } else {
+            wc_add_notice('Payment error: ' . $result['message'], 'error');
+            return;
+        }
+    }
+
+    public function payment_scripts() {
+        if (!is_checkout()) {
+            return;
+        }
+
+        wp_enqueue_script('zubrify-checkout', ZUBRIFY_PAY_PLUGIN_URL . 'assets/js/checkout.js', array('jquery'), ZUBRIFY_PAY_VERSION, true);
+        wp_enqueue_style('zubrify-styles', ZUBRIFY_PAY_PLUGIN_URL . 'assets/css/styles.css', array(), ZUBRIFY_PAY_VERSION);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Installation Instructions</h3>
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>Download the complete plugin files</li>
+                        <li>Upload to your WordPress <code>/wp-content/plugins/</code> directory</li>
+                        <li>Activate the plugin in WordPress admin</li>
+                        <li>Go to WooCommerce → Settings → Payments</li>
+                        <li>Configure Zubrify Pay with your API credentials</li>
+                        <li>Test the payment flow</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Section -->
+        <div id="dashboard" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg text-center">
+                        <i class="fas fa-dollar-sign text-3xl text-blue-600 mb-2"></i>
+                        <h3 class="text-2xl font-bold text-gray-800">$12,450</h3>
+                        <p class="text-gray-600">Total Revenue</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg text-center">
+                        <i class="fas fa-check-circle text-3xl text-green-600 mb-2"></i>
+                        <h3 class="text-2xl font-bold text-gray-800">1,234</h3>
+                        <p class="text-gray-600">Successful Payments</p>
+                    </div>
+                    <div class="bg-yellow-50 p-6 rounded-lg text-center">
+                        <i class="fas fa-clock text-3xl text-yellow-600 mb-2"></i>
+                        <h3 class="text-2xl font-bold text-gray-800">45</h3>
+                        <p class="text-gray-600">Pending Payments</p>
+                    </div>
+                    <div class="bg-red-50 p-6 rounded-lg text-center">
+                        <i class="fas fa-times-circle text-3xl text-red-600 mb-2"></i>
+                        <h3 class="text-2xl font-bold text-gray-800">23</h3>
+                        <p class="text-gray-600">Failed Payments</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Payment Methods Distribution</h3>
+                        <div style="height: 300px;">
+                            <canvas id="paymentMethodsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Transaction Volume (Last 7 Days)</h3>
+                        <div style="height: 300px;">
+                            <canvas id="volumeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-lg">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-semibold">Recent Transactions</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Method</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">pay_abc123</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">John Doe</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$99.99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mobile Money</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-01-15 10:30 AM</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">pay_def456</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jane Smith</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$149.50</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Credit Card</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-01-15 09:15 AM</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">pay_ghi789</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Ahmed Hassan</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$75.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Bank Transfer</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-01-15 08:45 AM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Section -->
+        <div id="security" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Security Features</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <i class="fas fa-shield-alt text-3xl text-green-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Encryption</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• TLS 1.3 for all communications</li>
+                            <li>• AES-256 data encryption</li>
+                            <li>• RSA-4096 key encryption</li>
+                            <li>• End-to-end encryption</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <i class="fas fa-key text-3xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Authentication</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• OAuth 2.0 implementation</li>
+                            <li>• JWT token authentication</li>
+                            <li>• API key management</li>
+                            <li>• Two-factor authentication</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">HMAC Signature Verification</h3>
+                    <p class="text-gray-600 mb-4">All API requests are signed using HMAC-SHA256 to ensure authenticity and prevent tampering.</p>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>// PHP Implementation
+function generateHMACSignature($data, $secret) {
+    $payload = json_encode($data);
+    $timestamp = time();
+    $message = $timestamp . '.' . $payload;
+    $signature = hash_hmac('sha256', $message, $secret);
+    
+    return array(
+        'timestamp' => $timestamp,
+        'signature' => $signature
+    );
+}
+
+// JavaScript Implementation
+function generateHMACSignature(data, secret) {
+    const payload = JSON.stringify(data);
+    const timestamp = Math.floor(Date.now() / 1000);
+    const message = `${timestamp}.${payload}`;
+    const signature = CryptoJS.HmacSHA256(message, secret).toString();
+    
+    return {
+        timestamp: timestamp,
+        signature: signature
+    };
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Rate Limiting</h3>
+                    <div class="bg-yellow-50 p-6 rounded-lg">
+                        <h4 class="text-lg font-semibold mb-2">API Rate Limits</h4>
+                        <ul class="space-y-2">
+                            <li><strong>Payment Creation:</strong> 100 requests per minute</li>
+                            <li><strong>Payment Status:</strong> 1000 requests per minute</li>
+                            <li><strong>Webhook Delivery:</strong> 500 requests per minute</li>
+                            <li><strong>Refund Requests:</strong> 50 requests per minute</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Fraud Prevention</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">IP Filtering</h4>
+                            <p class="text-sm text-gray-600">Whitelist/blacklist IP addresses for enhanced security</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Velocity Checking</h4>
+                            <p class="text-sm text-gray-600">Monitor transaction patterns for suspicious activity</p>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Device Fingerprinting</h4>
+                            <p class="text-sm text-gray-600">Track device characteristics for fraud detection</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                    <h4 class="text-lg font-semibold mb-2">Security Best Practices</h4>
+                    <ul class="space-y-1">
+                        <li>• Never store API keys in client-side code</li>
+                        <li>• Always use HTTPS for all communications</li>
+                        <li>• Implement proper input validation and sanitization</li>
+                        <li>• Use webhook signature verification</li>
+                        <li>• Regularly rotate API keys</li>
+                        <li>• Monitor for unusual activity patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Webhooks Section -->
+        <div id="webhooks" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Webhook System</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Webhook Events</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Payment Events</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• payment.created</li>
+                                <li>• payment.completed</li>
+                                <li>• payment.failed</li>
+                                <li>• payment.cancelled</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Transaction Events</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• transaction.processed</li>
+                                <li>• refund.created</li>
+                                <li>• refund.completed</li>
+                                <li>• chargeback.created</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Webhook Payload Example</h3>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>{
+  "event": "payment.completed",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "payment_id": "pay_abc123",
+    "order_id": "ORDER_123",
+    "amount": "99.99",
+    "currency": "USD",
+    "status": "completed",
+    "payment_method": "mobile_money",
+    "transaction_id": "txn_xyz789",
+    "customer": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "252615123456"
+    },
+    "merchant_id": "merch_123",
+    "created_at": "2024-01-15T10:25:00Z",
+    "completed_at": "2024-01-15T10:30:00Z"
+  },
+  "signature": "sha256=a8b7c6d5e4f3..."
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Webhook Verification</h3>
+                    <p class="text-gray-600 mb-4">Always verify webhook signatures to ensure they come from Zubrify Pay:</p>
+                    <div class="code-block p-4 rounded-lg">
+                        <pre><code>// PHP Webhook Verification
+function verifyWebhookSignature($payload, $signature, $secret) {
+    $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+    return hash_equals($expectedSignature, $signature);
+}
+
+// Usage
+$payload = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_ZUBRIFY_SIGNATURE'];
+$secret = 'your_webhook_secret';
+
+if (verifyWebhookSignature($payload, $signature, $secret)) {
+    $data = json_decode($payload, true);
+    // Process webhook data
+    processWebhookData($data);
+} else {
+    http_response_code(401);
+    echo 'Invalid signature';
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Webhook Configuration</h3>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-lg font-semibold mb-2">Setup Instructions</h4>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Login to your Zubrify Pay dashboard</li>
+                            <li>Navigate to Settings → Webhooks</li>
+                            <li>Click "Add Webhook Endpoint"</li>
+                            <li>Enter your endpoint URL (must be HTTPS)</li>
+                            <li>Select events to subscribe to</li>
+                            <li>Save and copy the webhook secret</li>
+                            <li>Test the webhook endpoint</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <h4 class="text-lg font-semibold mb-2">Webhook Best Practices</h4>
+                    <ul class="space-y-1">
+                        <li>• Always verify webhook signatures</li>
+                        <li>• Handle webhook events idempotently</li>
+                        <li>• Respond with HTTP 200 status code</li>
+                        <li>• Implement retry logic for failed webhooks</li>
+                        <li>• Log webhook events for debugging</li>
+                        <li>• Use webhook secrets securely</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Section -->
+        <div id="installation" class="section hidden">
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Installation Guide</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">System Requirements</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Server Requirements</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• PHP 7.4 or higher</li>
+                                <li>• MySQL 5.7 or higher</li>
+                                <li>• Apache/Nginx web server</li>
+                                <li>• SSL certificate (HTTPS)</li>
+                                <li>• cURL extension enabled</li>
+                                <li>• OpenSSL extension enabled</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">WordPress Requirements</h4>
+                            <ul class="space-y-1 text-sm">
+                                <li>• WordPress 5.0 or higher</li>
+                                <li>• WooCommerce 4.0 or higher</li>
+                                <li>• PHP 7.4 or higher</li>
+                                <li>• Memory limit: 256MB+</li>
+                                <li>• Max execution time: 60s+</li>
+                                <li>• File permissions: 755/644</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Quick Installation</h3>
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-3">Step 1: Download Files</h4>
+                            <div class="space-y-3">
+                                <button onclick="downloadFile('zubrify-pay.php')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    <i class="fas fa-download mr-2"></i>Download Main Plugin File
+                                </button>
+                                <button onclick="downloadFile('database-schema.sql')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                    <i class="fas fa-database mr-2"></i>Download Database Schema
+                                </button>
+                                <button onclick="downloadFile('api-backend.php')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                    <i class="fas fa-server mr-2"></i>Download API Backend
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-3">Step 2: Database Setup</h4>
+                            <div class="code-block p-4 rounded-lg">
+                                <pre><code># Create database
+CREATE DATABASE zubrify_pay;
+
+# Import schema
+mysql -u username -p zubrify_pay < database-schema.sql
+
+# Create API user
+CREATE USER 'zubrify_api'@'localhost' IDENTIFIED BY 'secure_password';
+GRANT SELECT, INSERT, UPDATE ON zubrify_pay.* TO 'zubrify_api'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-3">Step 3: API Configuration</h4>
+                            <div class="code-block p-4 rounded-lg">
+                                <pre><code># config.php
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'zubrify_pay');
+define('DB_USER', 'zubrify_api');
+define('DB_PASS', 'secure_password');
+
+define('API_BASE_URL', 'https://yourdomain.com/api/');
+define('WEBHOOK_SECRET', 'your_webhook_secret_key');
+define('ENCRYPTION_KEY', 'your_32_character_encryption_key');</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-3">Step 4: WordPress Plugin</h4>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li>Upload plugin files to <code>/wp-content/plugins/zubrify-pay/</code></li>
+                                <li>Activate the plugin in WordPress admin</li>
+                                <li>Go to WooCommerce → Settings → Payments</li>
+                                <li>Configure Zubrify Pay settings</li>
+                                <li>Test the integration</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Testing Checklist</h3>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> Database connection successful
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> API endpoints responding
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> WordPress plugin activated
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> Payment gateway configured
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> Webhook endpoints working
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> SSL certificate installed
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2"> Test payment successful
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h4 class="text-lg font-semibold mb-2">Support & Documentation</h4>
+                    <p class="mb-2">Need help with installation? Contact our support team:</p>
+                    <ul class="space-y-1">
+                        <li>📧 Email: support@zubrify.com</li>
+                        <li>💬 Live Chat: Available 24/7</li>
+                        <li>📚 Documentation: docs.zubrify.com</li>
+                        <li>🎥 Video Tutorials: youtube.com/zubrify</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex items-center justify-center space-x-4 mb-4">
+                <i class="fas fa-credit-card text-2xl"></i>
+                <h3 class="text-xl font-bold">Zubrify Pay</h3>
+            </div>
+            <p class="text-lg mb-2">Your Complete Payment Gateway Solution</p>
+            <p class="opacity-75">Built with ❤️ for modern businesses</p>
+            <div class="mt-6 flex justify-center space-x-6">
+                <a href="#" class="hover:text-blue-200">
+                    <i class="fab fa-github text-xl"></i>
+                </a>
+                <a href="#" class="hover:text-blue-200">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="hover:text-blue-200">
+                    <i class="fab fa-linkedin text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('nav-active');
+            });
+            event.target.classList.add('nav-active');
+        }
+
+        // Chart initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Stats Chart
+            const statsCtx = document.getElementById('statsChart').getContext('2d');
+            new Chart(statsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Transaction Volume ($)',
+                        data: [5000, 7500, 12000, 9800, 15600, 12450],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    }
+                }
+            });
+
+            // Payment Methods Chart
+            const methodsCtx = document.getElementById('paymentMethodsChart').getContext('2d');
+            new Chart(methodsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mobile Money', 'Credit Cards', 'Bank Transfer', 'Digital Wallets'],
+                    datasets: [{
+                        data: [45, 30, 15, 10],
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 101, 101)',
+                            'rgb(251, 191, 36)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Volume Chart
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Transactions',
+                        data: [120, 150, 180, 90, 200, 160, 140],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+
+        // File download functionality
+        function downloadFile(filename) {
+            // This would normally trigger actual file downloads
+            // For demo purposes, we'll show an alert
+            alert(`Downloading ${filename}...`);
+            
+            // In a real implementation, you would:
+            // window.location.href = '/downloads/' + filename;
+        }
+
+        // Payment method selection handler
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'zubrify-payment-method') {
+                const mobileFields = document.getElementById('mobile-money-fields');
+                if (e.target.value === 'mobile_money') {
+                    mobileFields.style.display = 'block';
+                } else {
+                    mobileFields.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
