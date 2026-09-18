@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Zubrify Manager{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">ZUBRIFY<span>OS</span></div>
+    <nav>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('clients') }}">Clients</a>
+      <a href="{{ url_for('projects') }}">Projects</a>
+      <a href="{{ url_for('tasks') }}">Tasks</a>
+      <a href="{{ url_for('invoices') }}">Invoices</a>
+      {% if session.role == 'admin' %}
+      <a href="{{ url_for('users') }}">Users</a>
+      <a href="{{ url_for('audit_logs') }}">Audit Log</a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <div class="small muted">Signed in as</div>
+      <strong>{{ session.name }}</strong>
+      <div class="small badge">{{ session.role }}</div>
+      <a href="{{ url_for('password_page') }}">Change password</a>
+      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Zubrify Technologies</div>
+        <h1>{% block page_title %}Business Manager{% endblock %}</h1>
+      </div>
+      {% block actions %}{% endblock %}
+    </header>
+
+    {% if messages %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>
