@@ -1,0 +1,91 @@
+(amount),0) FROM payments WHERE invoice_id=?",(id,)).fetchone()[0]
+    balance=max(inv["amount"]-paid,0)
+    if balance <= 0 or amount > balance:
+        conn.close(); return RedirectResponse(f"/invoices/{id}/payment?error=Payment+exceeds+invoice+balance",303)
+    cur=conn.execute("INSERT INTO payments (invoice_id,amount,method,reference,paid_at,created_at) VALUES (?,?,?,?,?,?)",
+      (id,amount,f.get("method"),f.get("reference"),f.get("paid_at") or datetime.utcnow().strftime("%Y-%m-%d"),now()))
+    new_total=paid+amount; conn.execute("UPDATE invoices SET status=? WHERE id=?",("paid" if new_total>=inv["amount"] else "partial",id)); conn.commit(); pay_id=cur.lastrowid; conn.close()
+    audit(request.session["user_id"],"create","payment",pay_id,f"Invoice {inv['invoice_no']}: {amount}")
+    return RedirectResponse("/invoices?ok=Payment+recorded",303)
+
+
+@app.get("/users", response_class=HTMLResponse)
+def users(request:Request):
+    if red := admin_redirect(request): return red
+    conn=get_db(); rows=conn.execute("SELECT id,name,email,role,active,created_at FROM users ORDER BY id DESC").fetchall(); conn.close()
+    return render(request,"users.html",rows=rows)
+
+
+@app.get("/users/new", response_class=HTMLResponse)
+def user_new_page(request:Request):
+    if red := admin_redirect(request): return red
+    return render(request,"user_form.html")
+
+
+@app.post("/users/new")
+async def user_new(request:Request):
+    if red := admin_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    if len(str(f.get("password", ""))) < 10:
+        return RedirectResponse("/users/new?error=Password+must+be+at+least+10+characters",303)
+    conn=get_db()
+    try:
+        cur=conn.execute("INSERT INTO users (name,email,password_hash,role,active,created_at) VALUES (?,?,?,?,?,?)",
+          (f.get("name"),str(f.get("email","")).strip().lower(),hash_password(str(f.get("password",""))),f.get("role") or "staff",1,now()))
+        conn.commit(); uid=cur.lastrowid
+    except sqlite3.IntegrityError:
+        conn.close(); return RedirectResponse("/users/new?error=Email+already+exists",303)
+    conn.close(); audit(request.session["user_id"],"create","user",uid,str(f.get("email")))
+    return RedirectResponse("/users?ok=User+created",303)
+
+
+@app.get("/audit", response_class=HTMLResponse)
+def audit_logs(request:Request):
+    if red := admin_redirect(request): return red
+    conn=get_db(); rows=conn.execute("""SELECT audit_logs.*,users.name user_name FROM audit_logs LEFT JOIN users ON users.id=audit_logs.user_id ORDER BY audit_logs.id DESC LIMIT 200""").fetchall(); conn.close()
+    return render(request,"audit.html",rows=rows)
+
+
+@app.get("/account/password", response_class=HTMLResponse)
+def password_page(request: Request):
+    if red := auth_redirect(request): return red
+    return render(request, "password_form.html")
+
+
+@app.post("/account/password")
+async def password_change(request: Request):
+    if red := auth_redirect(request): return red
+    f = await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    current = str(f.get("current_password", ""))
+    new = str(f.get("new_password", ""))
+    confirm = str(f.get("confirm_password", ""))
+    if len(new) < 10:
+        return RedirectResponse("/account/password?error=New+password+must+be+at+least+10+characters", 303)
+    if new != confirm:
+        return RedirectResponse("/account/password?error=New+passwords+do+not+match", 303)
+    conn = get_db()
+    user = conn.execute("SELECT * FROM users WHERE id=?", (request.session["user_id"],)).fetchone()
+    if not user or not verify_password(current, user["password_hash"]):
+        conn.close()
+        return RedirectResponse("/account/password?error=Current+password+is+incorrect", 303)
+    conn.execute("UPDATE users SET password_hash=? WHERE id=?", (hash_password(new), user["id"]))
+    conn.commit(); conn.close()
+    audit(user["id"], "password_changed", "user", user["id"])
+    return RedirectResponse("/account/password?ok=Password+changed+successfully", 303)
+
+
+@app.get("/api/health")
+def health():
+    try:
+        conn=get_db(); conn.execute("SELECT 1").fetchone(); conn.close()
+        return {"status":"ok","database":"ok","time":now()}
+    except Exception as e:
+        return JSONResponse({"status":"error","error":str(e)},status_code=500)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    init_db()
+    uvicorn.run("app:app", host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), reload=False)
