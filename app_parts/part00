@@ -1,0 +1,200 @@
+import os
+import sqlite3
+import hashlib
+import hmac
+import secrets
+from datetime import datetime
+from pathlib import Path
+
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = Path(os.environ.get("DATABASE_PATH", str(BASE_DIR / "zubrify.db"))).expanduser().resolve()
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+APP_ENV = os.environ.get("APP_ENV", "development").lower()
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "1" if APP_ENV == "production" else "0").lower() in {"1", "true", "yes", "on"}
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,app.zubrify.com").split(",") if h.strip()]
+
+def load_secret_key():
+    env = os.environ.get("SECRET_KEY")
+    if env:
+        return env
+    secret_file = BASE_DIR / ".secret_key"
+    if secret_file.exists():
+        return secret_file.read_text().strip()
+    key = secrets.token_urlsafe(48)
+    secret_file.write_text(key)
+    return key
+
+
+app = FastAPI(title="Zubrify Business Manager", version="1.0.0")
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=load_secret_key(),
+    same_site="lax",
+    https_only=COOKIE_SECURE,
+)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if COOKIE_SECURE:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return response
+
+
+def now() -> str:
+    return datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def csrf_token(request: Request) -> str:
+    token = request.session.get("_csrf")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        request.session["_csrf"] = token
+    return token
+
+
+def csrf_valid(request: Request, form) -> bool:
+    expected = str(request.session.get("_csrf", ""))
+    supplied = str(form.get("_csrf", ""))
+    return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
+def csrf_failure():
+    return HTMLResponse("Invalid or expired form token. Refresh the page and try again.", status_code=403)
+
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+
+def hash_password(password: str, salt: bytes | None = None) -> str:
+    salt = salt or secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 310_000)
+    return f"pbkdf2_sha256${salt.hex()}${digest.hex()}"
+
+
+def verify_password(password: str, encoded: str) -> bool:
+    try:
+        _, salt_hex, digest_hex = encoded.split("$", 2)
+        test = hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt_hex), 310_000)
+        return hmac.compare_digest(test.hex(), digest_hex)
+    except Exception:
+        return False
+
+
+def init_db():
+    conn = get_db()
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'staff',
+            active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS clients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            company TEXT,
+            email TEXT,
+            phone TEXT,
+            status TEXT NOT NULL DEFAULT 'active',
+            notes TEXT,
+            created_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id INTEGER,
+            name TEXT NOT NULL,
+            description TEXT,
+            status TEXT NOT NULL DEFAULT 'planning',
+            budget REAL NOT NULL DEFAULT 0,
+            start_date TEXT,
+            due_date TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(client_id) REFERENCES clients(id) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            project_id INTEGER,
+            title TEXT NOT NULL,
+            description TEXT,
+            assigned_to INTEGER,
+            priority TEXT NOT NULL DEFAULT 'medium',
+            status TEXT NOT NULL DEFAULT 'todo',
+            due_date TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY(assigned_to) REFERENCES users(id) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS invoices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id INTEGER,
+            invoice_no TEXT NOT NULL UNIQUE,
+            description TEXT,
+            amount REAL NOT NULL DEFAULT 0,
+            due_date TEXT,
+            status TEXT NOT NULL DEFAULT 'unpaid',
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(client_id) REFERENCES clients(id) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            invoice_id INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            method TEXT,
+            reference TEXT,
+            paid_at TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS audit_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            action TEXT NOT NULL,
+            entity_type TEXT,
+            entity_id INTEGER,
+            details TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+        );
+        """
+    )
+    if conn.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
+        admin_email = os.environ.get("ADMIN_EMAIL", "admin@zubrify.local").strip().lower()
+        admin_password = os.environ.get("ADMIN_PASSWORD")
+        if not admin_password:
+            if APP_ENV == "production":
+                conn.close()
+                raise RuntimeError("ADMIN_PASSWORD must be set in production before first startup")
+            admin_password = "ChangeMe123!"
+        if len(admin_password) < 12:
+            conn.close()
+            raise RuntimeError("ADMIN_PASSWORD must be at least 12 characters")
+        conn.execute(
+            "INSERT INTO users (name,email,password_hash,role,active,created_at) VALUES (?,?,?,?,?,?)",
+            (os.environ.get("ADMIN_NAME", "Administrator"), admin_email, hash_password(admin_password), "admin", 1, now()),
+        )
+    conn.commit()
+    conn.close
