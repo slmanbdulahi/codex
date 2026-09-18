@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% block page_title %}{{ 'Edit client' if row else 'New client' }}{% endblock %}
+{% block content %}<section class="panel form-panel"><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Name<input name="name" value="{{ row.name if row else '' }}" required></label>
+<label>Company<input name="company" value="{{ row.company if row else '' }}"></label>
+<label>Email<input type="email" name="email" value="{{ row.email if row else '' }}"></label>
+<label>Phone<input name="phone" value="{{ row.phone if row else '' }}"></label>
+<label>Status<select name="status">{% for s in ['active','inactive','lead'] %}<option {{ 'selected' if row and row.status==s else '' }}>{{ s }}</option>{% endfor %}</select></label>
+<label class="full">Notes<textarea name="notes" rows="5">{{ row.notes if row else '' }}</textarea></label>
+<div class="full form-actions"><a class="btn" href="{{ url_for('clients') }}">Cancel</a><button class="btn primary">Save client</button></div>
+</form></section>{% endblock %}
