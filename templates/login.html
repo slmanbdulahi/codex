@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · Zubrify OS</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="brand brand-dark">ZUBRIFY<span>OS</span></div>
+    <p class="muted">Business operations, projects and finance in one place.</p>
+    {% if messages %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}
+    <form method="post" class="form-stack"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      <label>Email<input type="email" name="email" value="admin@zubrify.local" required></label>
+      <label>Password<input type="password" name="password" value="ChangeMe123!" required></label>
+      <button class="btn primary" type="submit">Sign in</button>
+    </form>
+    <div class="demo-note">Demo credentials are pre-filled for your first run.</div>
+  </div>
+</body>
+</html>
