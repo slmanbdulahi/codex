@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block page_title %}{{ 'Edit task' if row else 'New task' }}{% endblock %}
+{% block content %}<section class="panel form-panel"><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Task title<input name="title" value="{{ row.title if row else '' }}" required></label>
+<label>Project<select name="project_id"><option value="">No project</option>{% for p in projects %}<option value="{{p.id}}" {{ 'selected' if row and row.project_id==p.id else '' }}>{{p.name}}</option>{% endfor %}</select></label>
+<label>Assigned to<select name="assigned_to"><option value="">Unassigned</option>{% for u in users %}<option value="{{u.id}}" {{ 'selected' if row and row.assigned_to==u.id else '' }}>{{u.name}}</option>{% endfor %}</select></label>
+<label>Priority<select name="priority">{% for s in ['low','medium','high','urgent'] %}<option {{ 'selected' if row and row.priority==s else '' }}>{{s}}</option>{% endfor %}</select></label>
+<label>Status<select name="status">{% for s in ['todo','in_progress','blocked','done'] %}<option value="{{s}}" {{ 'selected' if row and row.status==s else '' }}>{{s|replace('_',' ')}}</option>{% endfor %}</select></label>
+<label>Due date<input type="date" name="due_date" value="{{ row.due_date if row else '' }}"></label>
+<label class="full">Description<textarea name="description" rows="5">{{ row.description if row else '' }}</textarea></label>
+<div class="full form-actions"><a class="btn" href="{{ url_for('tasks') }}">Cancel</a><button class="btn primary">Save task</button></div>
+</form></section>{% endblock %}
