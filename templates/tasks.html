@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block page_title %}Tasks{% endblock %}{% block actions %}<a class="btn primary" href="{{ url_for('task_new') }}">+ New task</a>{% endblock %}
+{% block content %}<section class="panel table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Assigned</th><th>Priority</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+{% for x in rows %}<tr><td><strong>{{ x.title }}</strong></td><td>{{ x.project_name or '—' }}</td><td>{{ x.assignee or '—' }}</td><td><span class="status {{ x.priority }}">{{ x.priority }}</span></td><td>{{ x.due_date or '—' }}</td><td><span class="status {{ x.status }}">{{ x.status|replace('_',' ') }}</span></td><td><a href="{{ url_for('task_edit',id=x.id) }}">Edit</a></td></tr>{% else %}<tr><td colspan="7" class="empty">No tasks yet.</td></tr>{% endfor %}
+</tbody></table></section>{% endblock %}
