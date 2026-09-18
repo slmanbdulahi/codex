@@ -1,0 +1,125 @@
+if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db()
+    cur=conn.execute("INSERT INTO projects (client_id,name,description,status,budget,start_date,due_date,created_at) VALUES (?,?,?,?,?,?,?,?)",
+        (f.get("client_id") or None,f.get("name"),f.get("description"),f.get("status") or "planning",float(f.get("budget") or 0),f.get("start_date"),f.get("due_date"),now()))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"create","project",cur.lastrowid,str(f.get("name")))
+    return RedirectResponse("/projects?ok=Project+created",303)
+
+
+@app.get("/projects/{id}/edit", response_class=HTMLResponse)
+def project_edit_page(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); row=conn.execute("SELECT * FROM projects WHERE id=?",(id,)).fetchone(); clients=conn.execute("SELECT id,name FROM clients ORDER BY name").fetchall(); conn.close()
+    if not row:return HTMLResponse("Not found",404)
+    return render(request,"project_form.html",row=row,clients=clients)
+
+
+@app.post("/projects/{id}/edit")
+async def project_edit(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db()
+    conn.execute("UPDATE projects SET client_id=?,name=?,description=?,status=?,budget=?,start_date=?,due_date=? WHERE id=?",
+        (f.get("client_id") or None,f.get("name"),f.get("description"),f.get("status") or "planning",float(f.get("budget") or 0),f.get("start_date"),f.get("due_date"),id))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"update","project",id,str(f.get("name")))
+    return RedirectResponse("/projects?ok=Project+updated",303)
+
+
+@app.get("/tasks", response_class=HTMLResponse)
+def tasks(request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); rows=conn.execute("""SELECT tasks.*,projects.name project_name,users.name assignee FROM tasks
+      LEFT JOIN projects ON projects.id=tasks.project_id LEFT JOIN users ON users.id=tasks.assigned_to
+      ORDER BY CASE tasks.status WHEN 'todo' THEN 1 WHEN 'in_progress' THEN 2 ELSE 3 END,tasks.id DESC""").fetchall(); conn.close()
+    return render(request,"tasks.html",rows=rows)
+
+
+@app.get("/tasks/new", response_class=HTMLResponse)
+def task_new_page(request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); projects=conn.execute("SELECT id,name FROM projects ORDER BY name").fetchall(); users=conn.execute("SELECT id,name FROM users WHERE active=1 ORDER BY name").fetchall(); conn.close()
+    return render(request,"task_form.html",row=None,projects=projects,users=users)
+
+
+@app.post("/tasks/new")
+async def task_new(request:Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db()
+    cur=conn.execute("INSERT INTO tasks (project_id,title,description,assigned_to,priority,status,due_date,created_at) VALUES (?,?,?,?,?,?,?,?)",
+      (f.get("project_id") or None,f.get("title"),f.get("description"),f.get("assigned_to") or None,f.get("priority") or "medium",f.get("status") or "todo",f.get("due_date"),now()))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"create","task",cur.lastrowid,str(f.get("title")))
+    return RedirectResponse("/tasks?ok=Task+created",303)
+
+
+@app.get("/tasks/{id}/edit", response_class=HTMLResponse)
+def task_edit_page(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); row=conn.execute("SELECT * FROM tasks WHERE id=?",(id,)).fetchone(); projects=conn.execute("SELECT id,name FROM projects ORDER BY name").fetchall(); users=conn.execute("SELECT id,name FROM users WHERE active=1 ORDER BY name").fetchall(); conn.close()
+    if not row:return HTMLResponse("Not found",404)
+    return render(request,"task_form.html",row=row,projects=projects,users=users)
+
+
+@app.post("/tasks/{id}/edit")
+async def task_edit(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db()
+    conn.execute("UPDATE tasks SET project_id=?,title=?,description=?,assigned_to=?,priority=?,status=?,due_date=? WHERE id=?",
+      (f.get("project_id") or None,f.get("title"),f.get("description"),f.get("assigned_to") or None,f.get("priority") or "medium",f.get("status") or "todo",f.get("due_date"),id))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"update","task",id,str(f.get("title")))
+    return RedirectResponse("/tasks?ok=Task+updated",303)
+
+
+@app.get("/invoices", response_class=HTMLResponse)
+def invoices(request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); rows=conn.execute("""SELECT invoices.*,clients.name client_name,COALESCE((SELECT SUM(amount) FROM payments p WHERE p.invoice_id=invoices.id),0) paid_amount FROM invoices LEFT JOIN clients ON clients.id=invoices.client_id ORDER BY invoices.id DESC""").fetchall(); conn.close()
+    return render(request,"invoices.html",rows=rows)
+
+
+@app.get("/invoices/new", response_class=HTMLResponse)
+def invoice_new_page(request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); clients=conn.execute("SELECT id,name FROM clients ORDER BY name").fetchall(); inv=next_invoice_no(conn); conn.close()
+    return render(request,"invoice_form.html",clients=clients,invoice_no=inv)
+
+
+@app.post("/invoices/new")
+async def invoice_new(request:Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db(); inv=str(f.get("invoice_no") or next_invoice_no(conn))
+    try:
+        cur=conn.execute("INSERT INTO invoices (client_id,invoice_no,description,amount,due_date,status,created_at) VALUES (?,?,?,?,?,?,?)",
+          (f.get("client_id") or None,inv,f.get("description"),float(f.get("amount") or 0),f.get("due_date"),"unpaid",now()))
+        conn.commit(); entity_id=cur.lastrowid
+    except sqlite3.IntegrityError:
+        conn.close(); return RedirectResponse("/invoices/new?error=Invoice+number+already+exists",303)
+    conn.close(); audit(request.session["user_id"],"create","invoice",entity_id,inv)
+    return RedirectResponse("/invoices?ok=Invoice+created",303)
+
+
+@app.get("/invoices/{id}/payment", response_class=HTMLResponse)
+def payment_page(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); inv=conn.execute("SELECT * FROM invoices WHERE id=?",(id,)).fetchone()
+    if not inv: conn.close(); return HTMLResponse("Not found",404)
+    paid=conn.execute("SELECT COALESCE(SUM(amount),0) FROM payments WHERE invoice_id=?",(id,)).fetchone()[0]; conn.close()
+    return render(request,"payment_form.html",inv=inv,paid=paid,balance=max(inv["amount"]-paid,0))
+
+
+@app.post("/invoices/{id}/payment")
+async def payment_create(id:int, request:Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    amount=float(f.get("amount") or 0)
+    if amount<=0:return RedirectResponse(f"/invoices/{id}/payment?error=Amount+must+be+greater+than+zero",303)
+    conn=get_db(); inv=conn.execute("SELECT * FROM invoices WHERE id=?",(id,)).fetchone()
+    if not inv: conn.close(); return HTMLResponse("Not found",404)
+    paid=conn.execute("SELECT COALESCE(SUM
