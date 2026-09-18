@@ -1,0 +1,185 @@
+()
+
+
+@app.on_event("startup")
+def startup():
+    init_db()
+
+
+def auth_redirect(request: Request):
+    if not request.session.get("user_id"):
+        return RedirectResponse("/login", status_code=303)
+    return None
+
+
+def admin_redirect(request: Request):
+    red = auth_redirect(request)
+    if red:
+        return red
+    if request.session.get("role") != "admin":
+        return RedirectResponse("/?error=Admin+access+required", status_code=303)
+    return None
+
+
+def render(request: Request, name: str, **ctx):
+    messages = []
+    if request.query_params.get("ok"):
+        messages.append(("success", request.query_params["ok"]))
+    if request.query_params.get("error"):
+        messages.append(("error", request.query_params["error"]))
+    data = {
+        "request": request,
+        "session": request.session,
+        "messages": messages,
+        "csrf_token": csrf_token(request),
+        **ctx,
+    }
+    return templates.TemplateResponse(request=request, name=name, context=data)
+
+
+def audit(user_id: int | None, action: str, entity_type="", entity_id=None, details=""):
+    if not user_id:
+        return
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO audit_logs (user_id,action,entity_type,entity_id,details,created_at) VALUES (?,?,?,?,?,?)",
+        (user_id, action, entity_type, entity_id, details, now()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def next_invoice_no(conn):
+    year = datetime.utcnow().year
+    n = conn.execute("SELECT COUNT(*) FROM invoices").fetchone()[0] + 1
+    return f"ZUB-{year}-{n:04d}"
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    if request.session.get("user_id"):
+        return RedirectResponse("/", status_code=303)
+    return render(request, "login.html")
+
+
+@app.post("/login")
+async def login(request: Request):
+    form = await request.form()
+    if not csrf_valid(request, form): return csrf_failure()
+    email = str(form.get("email", "")).strip().lower()
+    password = str(form.get("password", ""))
+    conn = get_db()
+    user = conn.execute("SELECT * FROM users WHERE email=? AND active=1", (email,)).fetchone()
+    conn.close()
+    if user and verify_password(password, user["password_hash"]):
+        request.session.clear()
+        request.session.update({"user_id": user["id"], "name": user["name"], "role": user["role"]})
+        audit(user["id"], "login", "user", user["id"])
+        return RedirectResponse("/", status_code=303)
+    return RedirectResponse("/login?error=Invalid+email+or+password", status_code=303)
+
+
+@app.get("/logout")
+def logout(request: Request):
+    if request.session.get("user_id"):
+        audit(request.session["user_id"], "logout", "user", request.session["user_id"])
+    request.session.clear()
+    return RedirectResponse("/login", status_code=303)
+
+
+@app.get("/", response_class=HTMLResponse)
+def dashboard(request: Request):
+    if red := auth_redirect(request):
+        return red
+    conn = get_db()
+    stats = {
+        "clients": conn.execute("SELECT COUNT(*) FROM clients WHERE status='active'").fetchone()[0],
+        "projects": conn.execute("SELECT COUNT(*) FROM projects WHERE status NOT IN ('completed','cancelled')").fetchone()[0],
+        "tasks": conn.execute("SELECT COUNT(*) FROM tasks WHERE status!='done'").fetchone()[0],
+        "unpaid": conn.execute("SELECT COALESCE(SUM(amount),0) FROM invoices WHERE status!='paid'").fetchone()[0],
+        "revenue": conn.execute("SELECT COALESCE(SUM(amount),0) FROM payments").fetchone()[0],
+    }
+    recent_tasks = conn.execute(
+        """SELECT tasks.*,projects.name project_name,users.name assignee FROM tasks
+        LEFT JOIN projects ON projects.id=tasks.project_id
+        LEFT JOIN users ON users.id=tasks.assigned_to ORDER BY tasks.id DESC LIMIT 6"""
+    ).fetchall()
+    recent_invoices = conn.execute(
+        """SELECT invoices.*,clients.name client_name,
+        COALESCE((SELECT SUM(amount) FROM payments p WHERE p.invoice_id=invoices.id),0) paid_amount
+        FROM invoices LEFT JOIN clients ON clients.id=invoices.client_id ORDER BY invoices.id DESC LIMIT 6"""
+    ).fetchall()
+    conn.close()
+    return render(request, "dashboard.html", stats=stats, recent_tasks=recent_tasks, recent_invoices=recent_invoices)
+
+
+@app.get("/clients", response_class=HTMLResponse)
+def clients(request: Request, q: str = ""):
+    if red := auth_redirect(request): return red
+    conn = get_db()
+    if q.strip():
+        like = f"%{q.strip()}%"
+        rows = conn.execute("SELECT * FROM clients WHERE name LIKE ? OR company LIKE ? OR email LIKE ? ORDER BY id DESC", (like, like, like)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM clients ORDER BY id DESC").fetchall()
+    conn.close()
+    return render(request, "clients.html", rows=rows, q=q)
+
+
+@app.get("/clients/new", response_class=HTMLResponse)
+def client_new_page(request: Request):
+    if red := auth_redirect(request): return red
+    return render(request, "client_form.html", row=None)
+
+
+@app.post("/clients/new")
+async def client_new(request: Request):
+    if red := auth_redirect(request): return red
+    f = await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn = get_db()
+    cur = conn.execute("INSERT INTO clients (name,company,email,phone,status,notes,created_at) VALUES (?,?,?,?,?,?,?)",
+        (f.get("name"),f.get("company"),f.get("email"),f.get("phone"),f.get("status") or "active",f.get("notes"),now()))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"create","client",cur.lastrowid,str(f.get("name")))
+    return RedirectResponse("/clients?ok=Client+created", status_code=303)
+
+
+@app.get("/clients/{id}/edit", response_class=HTMLResponse)
+def client_edit_page(id: int, request: Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); row=conn.execute("SELECT * FROM clients WHERE id=?",(id,)).fetchone(); conn.close()
+    if not row: return HTMLResponse("Not found",404)
+    return render(request,"client_form.html",row=row)
+
+
+@app.post("/clients/{id}/edit")
+async def client_edit(id: int, request: Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    if not csrf_valid(request, f): return csrf_failure()
+    conn=get_db()
+    conn.execute("UPDATE clients SET name=?,company=?,email=?,phone=?,status=?,notes=? WHERE id=?",
+        (f.get("name"),f.get("company"),f.get("email"),f.get("phone"),f.get("status") or "active",f.get("notes"),id))
+    conn.commit(); conn.close(); audit(request.session["user_id"],"update","client",id,str(f.get("name")))
+    return RedirectResponse("/clients?ok=Client+updated",303)
+
+
+@app.get("/projects", response_class=HTMLResponse)
+def projects(request: Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); rows=conn.execute("""SELECT projects.*,clients.name client_name FROM projects LEFT JOIN clients ON clients.id=projects.client_id ORDER BY projects.id DESC""").fetchall(); conn.close()
+    return render(request,"projects.html",rows=rows)
+
+
+@app.get("/projects/new", response_class=HTMLResponse)
+def project_new_page(request: Request):
+    if red := auth_redirect(request): return red
+    conn=get_db(); clients=conn.execute("SELECT id,name FROM clients ORDER BY name").fetchall(); conn.close()
+    return render(request,"project_form.html",row=None,clients=clients)
+
+
+@app.post("/projects/new")
+async def project_new(request: Request):
+    if red := auth_redirect(request): return red
+    f=await request.form()
+    
