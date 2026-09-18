@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block page_title %}New invoice{% endblock %}
+{% block content %}<section class="panel form-panel"><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Invoice number<input name="invoice_no" value="{{ invoice_no }}" required></label>
+<label>Client<select name="client_id" required><option value="">Choose client</option>{% for c in clients %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}</select></label>
+<label>Amount (KSh)<input type="number" step="0.01" min="0" name="amount" required></label>
+<label>Due date<input type="date" name="due_date"></label>
+<label class="full">Description<textarea name="description" rows="5"></textarea></label>
+<div class="full form-actions"><a class="btn" href="{{ url_for('invoices') }}">Cancel</a><button class="btn primary">Create invoice</button></div>
+</form></section>{% endblock %}
