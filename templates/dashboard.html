@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · Zubrify OS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block actions %}<a class="btn primary" href="{{ url_for('project_new') }}">+ New project</a>{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><span>Active clients</span><strong>{{ stats.clients }}</strong></div>
+  <div class="stat-card"><span>Open projects</span><strong>{{ stats.projects }}</strong></div>
+  <div class="stat-card"><span>Open tasks</span><strong>{{ stats.tasks }}</strong></div>
+  <div class="stat-card"><span>Outstanding</span><strong>KSh {{ '{:,.0f}'.format(stats.unpaid) }}</strong></div>
+  <div class="stat-card"><span>Total collected</span><strong>KSh {{ '{:,.0f}'.format(stats.revenue) }}</strong></div>
+</div>
+<div class="two-col">
+  <section class="panel"><div class="panel-head"><h2>Recent tasks</h2><a href="{{ url_for('tasks') }}">View all</a></div>
+    <div class="list-stack">
+    {% for x in recent_tasks %}<a class="list-row" href="{{ url_for('task_edit', id=x.id) }}"><div><strong>{{ x.title }}</strong><span>{{ x.project_name or 'No project' }} · {{ x.assignee or 'Unassigned' }}</span></div><span class="status {{ x.status }}">{{ x.status|replace('_',' ') }}</span></a>{% else %}<div class="empty">No tasks yet.</div>{% endfor %}
+    </div>
+  </section>
+  <section class="panel"><div class="panel-head"><h2>Recent invoices</h2><a href="{{ url_for('invoices') }}">View all</a></div>
+    <div class="list-stack">
+    {% for x in recent_invoices %}<div class="list-row"><div><strong>{{ x.invoice_no }}</strong><span>{{ x.client_name or 'No client' }} · KSh {{ '{:,.0f}'.format(x.amount) }}</span></div><span class="status {{ x.status }}">{{ x.status }}</span></div>{% else %}<div class="empty">No invoices yet.</div>{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
