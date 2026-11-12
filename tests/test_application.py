@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 import secrets
@@ -15,6 +16,7 @@ from app import create_app
 from database import database, init_db
 from manage import backup, set_access
 from money import parse_minor
+from passwords import LEGACY_ITERATIONS
 from settings import Settings
 
 ADMIN = "owner@example.invalid"
@@ -196,6 +198,24 @@ def test_login_rate_limit_and_redacted_audit(browser, settings):
     with database(settings.database) as conn:
         rows = conn.execute("SELECT action,details,user_id FROM audit_logs").fetchall()
     assert [tuple(row) for row in rows] == [("login_failed", "", None)] * 5 + [("login_throttled", "", None)]
+
+
+@pytest.mark.parametrize(
+    ("role", "length", "allowed"), [("admin", 12, False), ("admin", 20, True), ("staff", 12, True)]
+)
+def test_legacy_hash_sign_in(browser, settings, role, length, allowed):
+    password = secrets.token_urlsafe(20)[:length]
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, LEGACY_ITERATIONS)
+    encoded = f"pbkdf2_sha256${salt.hex()}${digest.hex()}"
+    email = f"legacy-{role}@example.invalid"
+    with database(settings.database, write=True) as conn:
+        conn.execute(
+            "INSERT INTO users (name,email,password_hash,role,active,created_at) VALUES ('Legacy',?,?,?,1,'2026-01-01')",
+            (email, encoded, role),
+        )
+    location = login(browser, email, password).headers["location"]
+    assert (location == "/") is allowed
 
 
 @pytest.mark.parametrize(

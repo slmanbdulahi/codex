@@ -2,7 +2,7 @@ import ipaddress
 import os
 import re
 import secrets
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -14,7 +14,7 @@ HOST_PATTERN = re.compile(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0
 class Settings:
     database: Path
     production: bool
-    secret_key: str
+    secret_key: str = field(repr=False)
     allowed_hosts: tuple[str, ...]
     trusted_proxies: str
     session_seconds: int = 8 * 60 * 60

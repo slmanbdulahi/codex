@@ -103,9 +103,12 @@ def login(request: Request, form: Form):
     with db_for(request) as conn:
         user = conn.execute("SELECT * FROM users WHERE email=? AND active=1", (email,)).fetchone()
     verified = verify_password(password, user["password_hash"] if user else DUMMY_HASH)
-    # Previous production bootstrap required 12 characters. Retire shorter legacy admin passwords.
+    # Apply the current password policy to administrators, including accounts from the legacy bootstrap.
     accepted = (
-        user and verified and user["role"] in ROLES and (user["role"] != "admin" or len(password) >= 12)
+        user
+        and verified
+        and user["role"] in ROLES
+        and (user["role"] != "admin" or valid_new_password(password))
     )
     with db_for(request, write=True) as conn:
         if accepted:
