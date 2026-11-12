@@ -1,41 +1,54 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-const API_KEY = process.env.REACT_APP_API_KEY;
+const API_ROOT = '/api/payments';
 
-async function handleResponse(response) {
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || 'API request failed');
+function resourceId(value) {
+  if (typeof value !== 'string' || !/^[a-zA-Z0-9_-]{1,128}$/.test(value)) {
+    throw new Error('Invalid payment or invoice ID');
   }
-  return response.json();
+  return value;
 }
 
-export async function createPayment(paymentData) {
-  const response = await fetch(`${API_BASE_URL}/payments`, {
+async function request(path, options) {
+  const response = await fetch(path, {
+    credentials: 'same-origin',
+    redirect: 'error',
+    cache: 'no-store',
+    ...options
+  });
+  if (!response.ok) {
+    throw new Error('The payment service could not complete this request');
+  }
+  return response;
+}
+
+function mutation(csrfToken, requestId, body) {
+  if (!csrfToken || !requestId) {
+    throw new Error('Payment actions require a server session and request ID');
+  }
+  return {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
+      'X-CSRF-Token': csrfToken,
+      'Idempotency-Key': requestId
     },
-    body: JSON.stringify(paymentData)
-  });
-  return handleResponse(response);
+    body: JSON.stringify(body)
+  };
 }
 
-export async function getPaymentStatus(paymentId) {
-  const response = await fetch(`${API_BASE_URL}/payments/${paymentId}`, {
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`
-    }
-  });
-  return handleResponse(response);
+export async function createPayment({ invoiceId, amount }, { csrfToken, requestId } = {}) {
+  const id = resourceId(invoiceId);
+  if (typeof amount !== 'string' || !/^[0-9]{1,10}(?:\.[0-9]{1,2})?$/.test(amount) || !/[1-9]/.test(amount)) {
+    throw new Error('Enter a positive amount with at most two decimal places');
+  }
+  const response = await request(API_ROOT, mutation(csrfToken, requestId, { invoiceId: id, amount }));
+  return response.json();
 }
 
-export async function refundPayment(paymentId) {
-  const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/refund`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`
-    }
-  });
-  return handleResponse(response);
+export async function getPaymentStatus(paymentId, { signal } = {}) {
+  const response = await request(`${API_ROOT}/${resourceId(paymentId)}`, { signal });
+  return response.json();
+}
+
+export async function refundPayment(paymentId, { csrfToken, requestId } = {}) {
+  await request(`${API_ROOT}/${resourceId(paymentId)}/refund`, mutation(csrfToken, requestId, {}));
 }
