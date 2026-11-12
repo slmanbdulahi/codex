@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zubrify Pay - Complete Payment Gateway System</title>
+    <title>Zubrify Pay | Payment gateway demonstration</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,8 +23,8 @@
                     <h1 class="text-3xl font-bold">Zubrify Pay</h1>
                 </div>
                 <div class="text-right">
-                    <p class="text-lg">Your Complete Payment Gateway Solution</p>
-                    <p class="text-sm opacity-75">Built for Modern Businesses</p>
+                    <p class="text-lg">Payment gateway demonstration</p>
+                    <p class="text-sm opacity-75">Illustrative API, integration, and dashboard examples</p>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
                     <i class="fas fa-home mr-2"></i>Overview
                 </button>
                 <button onclick="showSection('api')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
-                    <i class="fas fa-code mr-2"></i>API Documentation
+                    <i class="fas fa-code mr-2"></i>Example API contract
                 </button>
                 <button onclick="showSection('database')" class="nav-btn py-4 px-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">
                     <i class="fas fa-database mr-2"></i>Database Schema
@@ -67,29 +67,29 @@
         <!-- Overview Section -->
         <div id="overview" class="section">
             <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome to Zubrify Pay</h2>
-                <p class="text-lg text-gray-600 mb-8">A complete, self-hosted payment gateway solution designed for businesses who want full control over their payment processing.</p>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Zubrify Pay demonstration</h2>
+                <p class="text-lg text-gray-600 mb-8">Explore example payment flows, API contracts, and dashboard screens. Use synthetic data and test credentials when adapting the examples. Production processing requires a payment provider integration, independent security review, and applicable compliance validation.</p>
                 
                 <div class="grid md:grid-cols-3 gap-6 mb-8">
                     <div class="text-center p-6 bg-blue-50 rounded-lg">
                         <i class="fas fa-bolt text-4xl text-blue-600 mb-4"></i>
-                        <h3 class="text-xl font-semibold mb-2">Fast & Reliable</h3>
-                        <p class="text-gray-600">Lightning-fast transaction processing with 99.9% uptime guarantee</p>
+                        <h3 class="text-xl font-semibold mb-2">Payment flows</h3>
+                        <p class="text-gray-600">Example payment creation, status, and refund requests.</p>
                     </div>
                     <div class="text-center p-6 bg-green-50 rounded-lg">
                         <i class="fas fa-shield-alt text-4xl text-green-600 mb-4"></i>
-                        <h3 class="text-xl font-semibold mb-2">Secure</h3>
-                        <p class="text-gray-600">Bank-grade security with PCI DSS compliance and advanced fraud protection</p>
+                        <h3 class="text-xl font-semibold mb-2">Security design</h3>
+                        <p class="text-gray-600">Example controls for designing and reviewing a payment integration.</p>
                     </div>
                     <div class="text-center p-6 bg-purple-50 rounded-lg">
                         <i class="fas fa-cogs text-4xl text-purple-600 mb-4"></i>
                         <h3 class="text-xl font-semibold mb-2">Customizable</h3>
-                        <p class="text-gray-600">Full control over your payment flow with extensive customization options</p>
+                        <p class="text-gray-600">Example integrations for a merchant checkout.</p>
                     </div>
                 </div>
 
                 <div class="bg-gray-50 rounded-lg p-6 mb-8">
-                    <h3 class="text-2xl font-semibold mb-4">Supported Payment Methods</h3>
+                    <h3 class="text-2xl font-semibold mb-4">Example payment methods</h3>
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="flex items-center p-3 bg-white rounded">
                             <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="bg-blue-600 text-white rounded-lg p-6">
-                    <h3 class="text-xl font-semibold mb-4">Transaction Statistics</h3>
+                    <h3 class="text-xl font-semibold mb-4">Example transaction statistics</h3>
                     <div style="height: 400px;">
                         <canvas id="statsChart"></canvas>
                     </div>
@@ -119,15 +119,15 @@
             </div>
         </div>
 
-        <!-- API Documentation Section -->
+        <!-- Example API contract Section -->
         <div id="api" class="section hidden">
             <div class="bg-white rounded-lg shadow-sm p-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">API Documentation</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Example API contract</h2>
                 
                 <div class="mb-8">
                     <h3 class="text-2xl font-semibold mb-4">Base URL</h3>
                     <div class="code-block p-4 rounded-lg">
-                        <code>https://api.zubrify.com/v1/</code>
+                        <code>https://api.example.invalid/v1/</code>
                     </div>
                 </div>
 
@@ -158,8 +158,8 @@
     "phone": "252615123456"
   },
   "order_id": "ORDER_123",
-  "return_url": "https://yoursite.com/return",
-  "webhook_url": "https://yoursite.com/webhook"
+  "return_url": "https://merchant.example.invalid/return",
+  "webhook_url": "https://merchant.example.invalid/webhook"
 }</code></pre>
                     </div>
 
@@ -169,7 +169,7 @@
   "success": true,
   "payment_id": "pay_abc123",
   "status": "pending",
-  "payment_url": "https://checkout.zubrify.com/pay_abc123",
+  "payment_url": "https://checkout.example.invalid/pay_abc123",
   "expires_at": "2024-01-01T12:00:00Z"
 }</code></pre>
                     </div>
@@ -349,7 +349,7 @@
                 <div class="bg-gray-50 p-6 rounded-lg">
                     <h3 class="text-xl font-semibold mb-4">Installation Script</h3>
                     <div class="code-block p-4 rounded-lg">
-                        <pre><code>-- Run this script to create the complete Zubrify Pay database
+                        <pre><code>-- Illustrative SQL excerpt for a disposable test database
 -- Replace 'zubrify_pay' with your preferred database name
 
 CREATE DATABASE zubrify_pay;
@@ -360,13 +360,13 @@ SOURCE /path/to/zubrify_pay_schema.sql;
 
 -- Create default admin user
 INSERT INTO merchants (id, name, email, status) 
-VALUES (UUID(), 'System Admin', 'admin@zubrify.com', 'active');
+VALUES (UUID(), 'System Admin', 'admin@example.invalid', 'active');
 
 -- Generate API keys for admin
 INSERT INTO api_keys (id, merchant_id, key_type, api_key, api_secret)
 VALUES (
     UUID(), 
-    (SELECT id FROM merchants WHERE email = 'admin@zubrify.com'),
+    (SELECT id FROM merchants WHERE email = 'admin@example.invalid'),
     'live',
     CONCAT('zp_live_', REPLACE(UUID(), '-', '')),
     REPLACE(UUID(), '-', '')
@@ -657,7 +657,7 @@ class Zubrify_Gateway extends WC_Payment_Gateway {
                 <div class="bg-blue-50 p-6 rounded-lg">
                     <h3 class="text-xl font-semibold mb-4">Installation Instructions</h3>
                     <ol class="list-decimal list-inside space-y-2">
-                        <li>Download the complete plugin files</li>
+                        <li>Use the plugin excerpts as an integration reference</li>
                         <li>Upload to your WordPress <code>/wp-content/plugins/</code> directory</li>
                         <li>Activate the plugin in WordPress admin</li>
                         <li>Go to WooCommerce → Settings → Payments</li>
@@ -671,7 +671,7 @@ class Zubrify_Gateway extends WC_Payment_Gateway {
         <!-- Admin Dashboard Section -->
         <div id="dashboard" class="section hidden">
             <div class="bg-white rounded-lg shadow-sm p-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Sample admin dashboard</h2>
                 
                 <div class="grid md:grid-cols-4 gap-6 mb-8">
                     <div class="bg-blue-50 p-6 rounded-lg text-center">
@@ -768,34 +768,34 @@ class Zubrify_Gateway extends WC_Payment_Gateway {
         <!-- Security Section -->
         <div id="security" class="section hidden">
             <div class="bg-white rounded-lg shadow-sm p-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Security Features</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Security design considerations</h2>
                 
                 <div class="grid md:grid-cols-2 gap-8 mb-8">
                     <div class="bg-green-50 p-6 rounded-lg">
                         <i class="fas fa-shield-alt text-3xl text-green-600 mb-4"></i>
-                        <h3 class="text-xl font-semibold mb-2">Encryption</h3>
+                        <h3 class="text-xl font-semibold mb-2">Encryption design</h3>
                         <ul class="space-y-2 text-gray-600">
-                            <li>• TLS 1.3 for all communications</li>
-                            <li>• AES-256 data encryption</li>
-                            <li>• RSA-4096 key encryption</li>
-                            <li>• End-to-end encryption</li>
+                            <li>• Use HTTPS with a current TLS configuration</li>
+                            <li>• Evaluate encryption and key storage for sensitive data</li>
+                            <li>• Define key rotation and access controls</li>
+                            <li>• Document where each system can read sensitive data</li>
                         </ul>
                     </div>
                     <div class="bg-blue-50 p-6 rounded-lg">
                         <i class="fas fa-key text-3xl text-blue-600 mb-4"></i>
                         <h3 class="text-xl font-semibold mb-2">Authentication</h3>
                         <ul class="space-y-2 text-gray-600">
-                            <li>• OAuth 2.0 implementation</li>
+                            <li>• Choose a suitable authentication protocol</li>
                             <li>• JWT token authentication</li>
                             <li>• API key management</li>
-                            <li>• Two-factor authentication</li>
+                            <li>• Evaluate multi-factor authentication</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="mb-8">
                     <h3 class="text-2xl font-semibold mb-4">HMAC Signature Verification</h3>
-                    <p class="text-gray-600 mb-4">All API requests are signed using HMAC-SHA256 to ensure authenticity and prevent tampering.</p>
+                    <p class="text-gray-600 mb-4">This sample illustrates HMAC-SHA256 request signing. An implementation needs canonicalization, replay protection, key rotation, and security review.</p>
                     <div class="code-block p-4 rounded-lg">
                         <pre><code>// PHP Implementation
 function generateHMACSignature($data, $secret) {
@@ -828,7 +828,7 @@ function generateHMACSignature(data, secret) {
                 <div class="mb-8">
                     <h3 class="text-2xl font-semibold mb-4">Rate Limiting</h3>
                     <div class="bg-yellow-50 p-6 rounded-lg">
-                        <h4 class="text-lg font-semibold mb-2">API Rate Limits</h4>
+                        <h4 class="text-lg font-semibold mb-2">Illustrative API rate limits</h4>
                         <ul class="space-y-2">
                             <li><strong>Payment Creation:</strong> 100 requests per minute</li>
                             <li><strong>Payment Status:</strong> 1000 requests per minute</li>
@@ -839,7 +839,7 @@ function generateHMACSignature(data, secret) {
                 </div>
 
                 <div class="mb-8">
-                    <h3 class="text-2xl font-semibold mb-4">Fraud Prevention</h3>
+                    <h3 class="text-2xl font-semibold mb-4">Fraud controls to evaluate</h3>
                     <div class="grid md:grid-cols-3 gap-6">
                         <div class="bg-purple-50 p-4 rounded-lg">
                             <h4 class="font-semibold mb-2">IP Filtering</h4>
@@ -929,7 +929,7 @@ function generateHMACSignature(data, secret) {
 
                 <div class="mb-8">
                     <h3 class="text-2xl font-semibold mb-4">Webhook Verification</h3>
-                    <p class="text-gray-600 mb-4">Always verify webhook signatures to ensure they come from Zubrify Pay:</p>
+                    <p class="text-gray-600 mb-4">Verify webhook signatures against your provider's documented format. This snippet illustrates the approach.</p>
                     <div class="code-block p-4 rounded-lg">
                         <pre><code>// PHP Webhook Verification
 function verifyWebhookSignature($payload, $signature, $secret) {
@@ -986,16 +986,16 @@ if (verifyWebhookSignature($payload, $signature, $secret)) {
         <!-- Installation Section -->
         <div id="installation" class="section hidden">
             <div class="bg-white rounded-lg shadow-sm p-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Installation Guide</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Example integration setup</h2>
                 
                 <div class="mb-8">
-                    <h3 class="text-2xl font-semibold mb-4">System Requirements</h3>
+                    <h3 class="text-2xl font-semibold mb-4">Example application stack</h3>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <h4 class="font-semibold mb-2">Server Requirements</h4>
                             <ul class="space-y-1 text-sm">
-                                <li>• PHP 7.4 or higher</li>
-                                <li>• MySQL 5.7 or higher</li>
+                                <li>• A supported PHP release</li>
+                                <li>• A supported MySQL release</li>
                                 <li>• Apache/Nginx web server</li>
                                 <li>• SSL certificate (HTTPS)</li>
                                 <li>• cURL extension enabled</li>
@@ -1005,9 +1005,9 @@ if (verifyWebhookSignature($payload, $signature, $secret)) {
                         <div class="bg-green-50 p-4 rounded-lg">
                             <h4 class="font-semibold mb-2">WordPress Requirements</h4>
                             <ul class="space-y-1 text-sm">
-                                <li>• WordPress 5.0 or higher</li>
-                                <li>• WooCommerce 4.0 or higher</li>
-                                <li>• PHP 7.4 or higher</li>
+                                <li>• A supported WordPress release</li>
+                                <li>• A compatible, supported WooCommerce release</li>
+                                <li>• A supported PHP release</li>
                                 <li>• Memory limit: 256MB+</li>
                                 <li>• Max execution time: 60s+</li>
                                 <li>• File permissions: 755/644</li>
@@ -1020,16 +1020,16 @@ if (verifyWebhookSignature($payload, $signature, $secret)) {
                     <h3 class="text-2xl font-semibold mb-4">Quick Installation</h3>
                     <div class="space-y-6">
                         <div class="bg-gray-50 p-6 rounded-lg">
-                            <h4 class="text-lg font-semibold mb-3">Step 1: Download Files</h4>
+                            <h4 class="text-lg font-semibold mb-3">Step 1: Review example files</h4>
                             <div class="space-y-3">
                                 <button onclick="downloadFile('zubrify-pay.php')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                                    <i class="fas fa-download mr-2"></i>Download Main Plugin File
+                                    <i class="fas fa-download mr-2"></i>Example plugin file
                                 </button>
                                 <button onclick="downloadFile('database-schema.sql')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                    <i class="fas fa-database mr-2"></i>Download Database Schema
+                                    <i class="fas fa-database mr-2"></i>Example database schema
                                 </button>
                                 <button onclick="downloadFile('api-backend.php')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                                    <i class="fas fa-server mr-2"></i>Download API Backend
+                                    <i class="fas fa-server mr-2"></i>Example API backend
                                 </button>
                             </div>
                         </div>
@@ -1059,7 +1059,7 @@ define('DB_NAME', 'zubrify_pay');
 define('DB_USER', 'zubrify_api');
 define('DB_PASS', 'secure_password');
 
-define('API_BASE_URL', 'https://yourdomain.com/api/');
+define('API_BASE_URL', 'https://api.example.invalid/api/');
 define('WEBHOOK_SECRET', 'your_webhook_secret_key');
 define('ENCRYPTION_KEY', 'your_32_character_encryption_key');</code></pre>
                             </div>
@@ -1109,13 +1109,7 @@ define('ENCRYPTION_KEY', 'your_32_character_encryption_key');</code></pre>
 
                 <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
                     <h4 class="text-lg font-semibold mb-2">Support & Documentation</h4>
-                    <p class="mb-2">Need help with installation? Contact our support team:</p>
-                    <ul class="space-y-1">
-                        <li>📧 Email: support@zubrify.com</li>
-                        <li>💬 Live Chat: Available 24/7</li>
-                        <li>📚 Documentation: docs.zubrify.com</li>
-                        <li>🎥 Video Tutorials: youtube.com/zubrify</li>
-                    </ul>
+                    <p class="mb-2">Report issues with this demonstration in the repository.</p>
                 </div>
             </div>
         </div>
@@ -1128,8 +1122,8 @@ define('ENCRYPTION_KEY', 'your_32_character_encryption_key');</code></pre>
                 <i class="fas fa-credit-card text-2xl"></i>
                 <h3 class="text-xl font-bold">Zubrify Pay</h3>
             </div>
-            <p class="text-lg mb-2">Your Complete Payment Gateway Solution</p>
-            <p class="opacity-75">Built with ❤️ for modern businesses</p>
+            <p class="text-lg mb-2">Payment gateway demonstration</p>
+            <p class="opacity-75">Sample data and integration examples</p>
             <div class="mt-6 flex justify-center space-x-6">
                 <a href="#" class="hover:text-blue-200">
                     <i class="fab fa-github text-xl"></i>
@@ -1244,7 +1238,7 @@ define('ENCRYPTION_KEY', 'your_32_character_encryption_key');</code></pre>
         function downloadFile(filename) {
             // This would normally trigger actual file downloads
             // For demo purposes, we'll show an alert
-            alert(`Downloading ${filename}...`);
+            alert(`The demonstration does not include a downloadable ${filename} package.`);
             
             // In a real implementation, you would:
             // window.location.href = '/downloads/' + filename;

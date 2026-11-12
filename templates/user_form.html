@@ -1,1 +1,14 @@
-{% extends 'base.html' %}{% block page_title %}New user{% endblock %}{% block content %}<section class="panel form-panel"><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token }}"><label>Name<input name="name" required></label><label>Email<input type="email" name="email" required></label><label>Password<input type="password" name="password" minlength="10" required></label><label>Role<select name="role"><option>staff</option><option>admin</option></select></label><div class="full form-actions"><a class="btn" href="{{url_for('users')}}">Cancel</a><button class="btn primary">Create user</button></div></form></section>{% endblock %}
+{% extends 'base.html' %}
+{% block page_title %}New user{% endblock %}
+{% block content %}
+<section class="panel form-panel">
+  <form method="post" class="form-grid">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+    <label>Name<input name="name" maxlength="120" required></label>
+    <label>Email<input type="email" name="email" maxlength="254" required></label>
+    <label>Password<input type="password" name="password" minlength="15" maxlength="256" autocomplete="new-password" required></label>
+    <label>Role<select name="role"><option>staff</option><option>finance</option><option>admin</option></select></label>
+    <div class="full form-actions"><a class="btn" href="{{ url_for('users') }}">Cancel</a><button class="btn primary">Create user</button></div>
+  </form>
+</section>
+{% endblock %}

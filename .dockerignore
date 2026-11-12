@@ -1,0 +1,8 @@
+**
+!*.py
+!schema.sql
+!requirements.txt
+!static/
+!static/**
+!templates/
+!templates/**
