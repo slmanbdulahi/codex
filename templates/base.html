@@ -13,20 +13,27 @@
     <nav>
       <a href="{{ url_for('dashboard') }}">Dashboard</a>
       <a href="{{ url_for('clients') }}">Clients</a>
+      {% if user.role in ('admin', 'staff') %}
       <a href="{{ url_for('projects') }}">Projects</a>
       <a href="{{ url_for('tasks') }}">Tasks</a>
+      {% endif %}
+      {% if user.role in ('admin', 'finance') %}
       <a href="{{ url_for('invoices') }}">Invoices</a>
-      {% if session.role == 'admin' %}
+      {% endif %}
+      {% if user.role == 'admin' %}
       <a href="{{ url_for('users') }}">Users</a>
       <a href="{{ url_for('audit_logs') }}">Audit Log</a>
       {% endif %}
     </nav>
     <div class="sidebar-footer">
       <div class="small muted">Signed in as</div>
-      <strong>{{ session.name }}</strong>
-      <div class="small badge">{{ session.role }}</div>
+      <strong>{{ user.name }}</strong>
+      <div class="small badge">{{ user.role }}</div>
       <a href="{{ url_for('password_page') }}">Change password</a>
-      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+      <form method="post" action="{{ url_for('logout') }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+        <button class="btn logout" type="submit">Logout</button>
+      </form>
     </div>
   </aside>
   <main class="main">

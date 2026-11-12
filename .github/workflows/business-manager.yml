@@ -1,0 +1,67 @@
+name: Business Manager checks
+
+on:
+  pull_request:
+    branches: [deploy/zubrify-business-manager]
+  push:
+    branches: [deploy/zubrify-business-manager]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install --require-hashes -r requirements-dev.txt
+      - run: python -m ruff check .
+      - run: python -m ruff format --check .
+      - run: python -m pytest -q
+      - run: python -m pip_audit --require-hashes --disable-pip -r requirements-dev.txt
+
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Build and smoke-test the container
+        run: |
+          docker build --tag business-manager:ci .
+          export SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+          export ADMIN_PASSWORD="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+          trap 'docker rm -f business-manager-ci >/dev/null 2>&1 || true' EXIT
+          docker run --detach --name business-manager-ci --read-only \
+            --tmpfs /data:rw,uid=10001,gid=10001,mode=0700 \
+            -e ALLOWED_HOSTS=127.0.0.1 -e ADMIN_EMAIL=ci@example.invalid \
+            -e SECRET_KEY -e ADMIN_PASSWORD business-manager:ci
+          test "$(docker exec business-manager-ci id -u)" = "10001"
+          for attempt in {1..20}; do
+            if docker exec business-manager-ci python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2)" 2>/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs business-manager-ci
+          exit 1
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Scan current files with redacted output
+        run: |
+          docker run --rm -v "$PWD:/repo:ro" ghcr.io/gitleaks/gitleaks:v8.30.1 dir --redact=100 /repo

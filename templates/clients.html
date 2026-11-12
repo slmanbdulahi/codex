@@ -1,7 +1,21 @@
-{% extends 'base.html' %}{% block page_title %}Clients{% endblock %}{% block actions %}<a class="btn primary" href="{{ url_for('client_new') }}">+ Add client</a>{% endblock %}
+{% extends 'base.html' %}
+{% block page_title %}Clients{% endblock %}
+{% block actions %}{% if user.role != 'finance' %}<a class="btn primary" href="{{ url_for('client_new_page') }}">+ Add client</a>{% endif %}{% endblock %}
 {% block content %}
-<form class="searchbar" method="get"><input name="q" value="{{ q }}" placeholder="Search clients, companies or email"><button class="btn">Search</button></form>
-<section class="panel table-wrap"><table><thead><tr><th>Name</th><th>Company</th><th>Contact</th><th>Status</th><th></th></tr></thead><tbody>
-{% for x in rows %}<tr><td><strong>{{ x.name }}</strong></td><td>{{ x.company or '—' }}</td><td>{{ x.email or '—' }}<br><span class="muted">{{ x.phone or '' }}</span></td><td><span class="status {{ x.status }}">{{ x.status }}</span></td><td><a href="{{ url_for('client_edit',id=x.id) }}">Edit</a></td></tr>{% else %}<tr><td colspan="5" class="empty">No clients found.</td></tr>{% endfor %}
-</tbody></table></section>
+<section class="panel">
+  <form class="searchbar" method="get"><input name="q" value="{{ q }}" placeholder="Search clients, companies or email"><button class="btn">Search</button></form>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Client</th><th>Company</th><th>Contact</th><th>Status</th>{% if user.role != 'finance' %}<th></th>{% endif %}</tr></thead>
+      <tbody>
+      {% for x in rows %}
+        <tr><td><strong>{{ x.name }}</strong></td><td>{{ x.company or '—' }}</td><td>{{ x.email or '—' }}<br><span class="muted">{{ x.phone or '' }}</span></td>
+          <td><span class="status {{ x.status }}">{{ x.status }}</span></td>
+          {% if user.role != 'finance' %}<td><a href="{{ url_for('client_edit_page', id=x.id) }}">Edit</a></td>{% endif %}
+        </tr>
+      {% else %}<tr><td colspan="{{ 4 if user.role == 'finance' else 5 }}" class="empty">No clients found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}
