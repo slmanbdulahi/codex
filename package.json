@@ -2,11 +2,16 @@
   "name": "codex",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo 'No tests'"
+    "test": "node --test",
+    "build": "esbuild src/components/*.jsx --bundle --format=esm --jsx=automatic --outdir=dist --external:react"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }
